@@ -16,25 +16,29 @@ def parse_args() -> Namespace:
     con_group.add_argument('-m', '--mtu', dest='mtu', required=False, default=20, type=int,
         help='Max. bluetooth packet data size in bytes used for sending')
 
+    dev_group = parser.add_argument_group('mode parameters')
+    dev_group.add_argument('-g', '--role', dest='gap_role', required=False, default='client', choices=['server', 'client'],
+        help='Operate as BLE role: client (BLE central), server (BLE peripheral)')
+    dev_group.add_argument('-n', '--name', dest='gap_name', required=False,
+        help='Custom name for GAP in BLE server mode. Otherwise "BLE Serial Server {PID}" name will be used')
+
     dev_group = parser.add_argument_group('device parameters')
     dev_group.add_argument('-d', '--dev', dest='device', required=False,
         help='BLE device address to connect (hex format, can be separated by colons)')
     dev_group.add_argument('-a', '--address-type', dest='addr_type', required=False, choices=['public', 'random'], default='public',
         help='BLE address type, only relevant on Windows, ignored otherwise')
     dev_group.add_argument('-s', '--service-uuid', dest='service_uuid', required=False,
-        help='The service used for scanning of potential devices')
+        help='''In "client" mode - service UUID used for scanning of potential devices.
+        In "server" mode - service UUID used to provide read/write GATT characteristics. ''')
         
-    dev_group.add_argument('-w', '--write-uuid', dest='write_uuid', required=False,
-        help='The GATT characteristic to write the serial data, you might use "ble-scan -d" to find it out')
     dev_group.add_argument('-r', '--read-uuid', dest='read_uuid', required=False,
-        help='The GATT characteristic to subscribe to notifications to read the serial data')
+        help='''The GATT characteristic to subscribe to notifications to read the serial data. 
+        If omitted, will be automaticvally generated based on service UUID''')
+    dev_group.add_argument('-w', '--write-uuid', dest='write_uuid', required=False,
+        help='''The GATT characteristic to write the serial data, you might use "ble-scan -d" to find it out.
+        If omitted, will be automaticvally generated based on service UUID''')
     dev_group.add_argument('--permit', dest='mode', required=False, default='rw', choices=['ro', 'rw', 'wo'],
         help='Restrict transfer direction on bluetooth: read only (ro), read+write (rw), write only (wo)')
-    
-    dev_group.add_argument('-g', '--role', dest='gap_role', required=False, default='client', choices=['server', 'client'],
-        help='Operate as BLE role: client (BLE central), server (BLE peripheral)')
-    dev_group.add_argument('-n', '--name', dest='gap_name', required=False,
-        help='Custom name for GAP in BLE server mode. Otherwise "BLE Serial Server {PID}" name will be used')
 
     log_group = parser.add_argument_group('logging options')
     log_group.add_argument('-l', '--log', dest='filename', required=False,
