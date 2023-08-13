@@ -36,8 +36,13 @@ class Main():
             else:
                 self.uart = UART(args.port, loop, args.mtu)
 
-            self.bt = self.BLE_class(args.adapter, args.service_uuid,
-                args.write_uuid, args.read_uuid, args.gap_name)
+            if args.gap_role == 'server':
+                self.bt = self.BLE_class(args.adapter, args.service_uuid,
+                    args.write_uuid, args.read_uuid, args.gap_name)
+            else:
+                self.bt = self.BLE_class(args.adapter, args.service_uuid,
+                    args.write_uuid, args.read_uuid)
+
 
             if args.filename:
                 self.log = FS_log(args.filename, args.binlog)
