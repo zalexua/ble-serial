@@ -2,7 +2,7 @@ import logging, datetime
 from enum import Enum
 
 class Direction:
-    BLE_IN = "-> BLE-IN"
+    BLE_IN = "-> BLE--IN"
     BLE_OUT = "<- BLE-OUT"
 
 class FS_log:
@@ -15,7 +15,7 @@ class FS_log:
         def ret_func(data):
             passthrough_func(data)
             t = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")
-            out = data.decode(errors='replace') if self.binlog else data.hex()
+            out = data.decode(errors='replace') if self.binlog else data.hex().upper()
             self.file.write(f'{t} {dir}: {out} \n')
         return ret_func
 
